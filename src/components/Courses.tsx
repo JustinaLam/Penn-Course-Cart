@@ -1,7 +1,8 @@
 import courses from '../data/courses.json'
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { CoursesProps } from '../App';
+import { CoursesProps } from './Home';
 import { Course } from '../App';
 
 const Courses = ({input, courseList, setCourseList, courseTitleList, setCourseTitles, cartVisible, setCapacityPopup, min, max}: CoursesProps) => (
@@ -30,19 +31,12 @@ const Courses = ({input, courseList, setCourseList, courseTitleList, setCourseTi
           .map(({dept, number, title, description}, index) => (
           <CourseItem key={index}>
             <p className={courseTitleList.includes(title) ? 'grayCourseListing': 'courseListing'} onClick={() => toggleDescription(dept+"-"+number)}>
-              {dept}
-              {' '}
-              {number}
-              {': '}
-              {title}
+              {dept + ' ' + number + ': ' + title}
             </p>
             <p className='description' id={dept+"-"+number}>
-              Description:
-              <br></br>
-              {description}
-              <br></br>
-              {/* Prereqs:
-              <br></br>
+              Description:<br></br>
+              {description}<br></br>
+              {/* Prereqs:<br></br>
               {prereqs} */}
               {courseTitleList.includes(title) ? 
               <button className="grayAddToCartBtn">
@@ -122,8 +116,10 @@ function toggleDescription(id: string) {
   var el = document.getElementById(id);
   if (el != null) {
     if (el.style.display == "block") {
+      console.log(id + " closing (main)");
       el.style.display = "none";
     } else {
+      console.log(id + " opening (main)");
       el.style.display = "block";
     }
   }
@@ -134,14 +130,19 @@ function addToCart(courseList:Array<Course>, courseTitleList:Array<String>,
                   setCourseList: (courseList: Array<Course>) => void, 
                   setCourseTitles: (courseTitleList: Array<String>) => void,
                   setCapacityPopup: (capacityPopup: boolean) => void) {
+  // Make sure this course is not in cart already
   if (!courseTitleList.includes(newCourseString.title)) {
     if(courseTitleList.length < 7) {
+      // Add course to cart lists
       setCourseList(courseList.concat(newCourseString));
       setCourseTitles(courseTitleList.concat(newCourseString.title));
     } else if (courseTitleList.length >= 7) {
+      // Display message to user that they have reached the 7-course limit
       setCapacityPopup(true);
     }
-  } 
+    // Close the description of the course in the main list
+    toggleDescription(newCourseString.dept + "-" + newCourseString.number);
+  }
 }
 
 const SectionHeader = styled.div`
@@ -172,10 +173,10 @@ const CoursesPageContainer = styled.div`
 `
 
 const WideStyle = {
-  width: '90%'
+  width: '80%'
 }
 const NarrowStyle = {
-  width: '70%'
+  width: '60%'
 }
 
 export default Courses;

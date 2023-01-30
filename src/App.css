@@ -80,7 +80,7 @@
   /* border: 2px solid rgb(0,0,0,0.2); */
   /* border-radius: 15px; */
   margin-top: 27px;
-  /* margin-right: 20px; */
+  margin-right: -5px;
   
   cursor: pointer;
 }
@@ -103,7 +103,7 @@
   /* border: 2px solid rgb(0,0,0,0.2); */
   border-radius: 15px;
   margin-top: 25px;
-  margin-left: 35px;
+  margin-left: 40px;
   margin-right: 20px;
   
   cursor: pointer;
@@ -127,14 +127,12 @@
   padding: 20px 15px;
   cursor: default;
 }
-
 .description {
   display: none;
   margin-left: 20px;
   color: rgb(80,80,80);
   z-index: 1;
 }
-
 .addToCartBtn {
   min-height: 25px;
   min-width: 50px;
@@ -146,7 +144,6 @@
   font-size: 15px;
   cursor: pointer;
 }
-
 .grayAddToCartBtn {
   min-height: 25px;
   min-width: 50px;
@@ -157,4 +154,10 @@
   border-radius: 5px;
   color: #ababab;
   font-size: 15px;
+}
+.receiptListing {
+  font-size: 20px;
+  border: 0;
+  padding: 20px 15px;
+  cursor: default;
 }

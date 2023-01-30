@@ -1,4 +1,4 @@
-import {NavProps} from "../App"
+import {NavProps} from "./Home"
 import styled from 'styled-components';
 import { TbCircle1, TbCircle2, TbCircle3, TbCircle4, TbCircle5, TbCircle6, TbCircle7 } from 'react-icons/tb'
 import { BsDash } from 'react-icons/bs'
@@ -6,7 +6,7 @@ import { BsDash } from 'react-icons/bs'
 
 const Nav = (props: NavProps) => (
   <NavBar id="nav">
-    <h2 id="logo">Penn Course Cart</h2>
+    <Logo id="logo" onClick={(e)=>{}}>Penn Course Cart</Logo>
     <input type="text" id="searchBar" placeholder="Enter a course" onKeyUp={() => handleSearchInput(props)}></input>
 
     {/* Cart icon */}
@@ -53,6 +53,12 @@ const Nav = (props: NavProps) => (
           onChange={(e) => props.setMax(e.target.value.length > 0 ? parseInt(e.target.value) : 8000)}/>
       </>
     }
+    {/* Checkout */}
+    {/* <img src="https://user-images.githubusercontent.com/88551260/215313407-a059fd08-8dab-4c97-a5a1-f08bfc09136f.png"
+      id="checkoutImg"
+      onClick={() => props.setFilterVisibility(!props.filterVisible)}>
+    </img> */}
+    {/* https://user-images.githubusercontent.com/88551260/215360206-a0fb8063-0400-484d-8a6f-468960e0512c.png */}
   </NavBar>
 )
 
@@ -68,6 +74,9 @@ const NavBar = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   min-height: 100px;
   color: white;
+`
+const Logo = styled.h2`
+  cursor: pointer;
 `
 const Bound = styled.input`
   position: relative;

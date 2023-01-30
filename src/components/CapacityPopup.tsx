@@ -1,4 +1,4 @@
-import {CapacityPopupProps} from "../App"
+import {CapacityPopupProps} from "./Home"
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { BiXCircle } from 'react-icons/bi'
@@ -9,7 +9,7 @@ const CapacityPopup = ({capacityPopup, setCapacityPopup}: CapacityPopupProps) =>
         <Container>
             <StyledBiXCircle size="3em" onClick={e=>setCapacityPopup(!capacityPopup)}/>
             <Header>
-                You have reached the maximum capacity of 7 courses. <br></br>
+                You have reached the maximum cart capacity of 7 courses. <br></br>
                 Please remove one from your cart in order to add more.
             </Header>
         </Container>
@@ -17,12 +17,12 @@ const CapacityPopup = ({capacityPopup, setCapacityPopup}: CapacityPopupProps) =>
 }
 
 const Header = styled.div`
-    font-size: 200%; 
+    font-size: 160%; 
     text-align: center; 
     border-bottom: 4px dashed black;
-    padding: 3%; 
+    padding: 10%; 
     width: 80%; 
-    margin-top: 25%;
+    margin: auto;
 `
 
 const StyledBiXCircle = styled(BiXCircle)`
@@ -37,8 +37,8 @@ const StyledBiXCircle = styled(BiXCircle)`
 `
 const Container = styled.div`
     background: rgb(179, 237, 255); 
-    width: 50em; 
-    height: 50vh; 
+    width: 60vh; 
+    height: 40vh; 
     position: fixed;
     transform: translate(-50%, -50%);
     top: 50%;

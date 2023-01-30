@@ -1,11 +1,12 @@
-// import '../App.css';
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate, useLocation, NavigateFunction } from 'react-router-dom';
 import styled from 'styled-components';
-import { CartProps } from "../App";
+import { CartProps } from "./Home";
 import { Course } from '../App';
 
-
-const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cartVisible}: CartProps) => (
+const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cartVisible}: CartProps) => {
+  const navigate = useNavigate();
+  return (
   <>
   {cartVisible &&
     <CartContainer>
@@ -13,14 +14,15 @@ const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cart
         <SectionHeader>
           Course Cart
         </SectionHeader>
-        {/* <CourseList> */}
-        { courseList.length > 0 ?
-          ( 
-            courseList.map(({dept, number, title, description},index) => (
+        { courseList.length > 0 ? 
+        // Course list is not empty - display courses in user's cart
+          ( courseList.map(({dept, number, title, description},index) => (
               <CourseItem key={index}>
+                {/* Course department, number, and title */}
                 <CourseListing onClick={() => toggleDescription("cart-"+dept+"-"+number)}>
                   {dept + ' ' + number + ': ' + title}
                 </CourseListing>
+                {/* Course description */}
                 <Description id={"cart-"+dept+"-"+number}>
                   Description:
                   <br></br>
@@ -29,6 +31,7 @@ const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cart
                   {/* Prereqs:
                   <br></br>
                   {prereqs} */}
+                  {/* Button to remove course from cart */}
                   <RemFromCartBtn onClick={() => removeFromCart(courseList, courseTitleList, {dept, number, title, description}, setCourseList, setCourseTitles)}>
                     Remove From Cart
                   </RemFromCartBtn>
@@ -38,23 +41,32 @@ const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cart
           )
           :
           (
+            // Course cart is empty - display a short message to user
             <SmallMessage>Your course cart is empty! <br></br>Add some courses to get started.</SmallMessage>
           )
-
         }
-        {/* </CourseList> */}
+        {/* Checkout Button */}
+        { courseList.length > 0 &&
+        <CheckoutBtn onClick={() => checkout(courseList, courseTitleList, navigate)}>
+          Check Out
+        </CheckoutBtn>
+        }
         </CartInnerContainer>
     </CartContainer>
-    }
+  }
   </>
-)
+  );
+}
 
 function toggleDescription(id: string) {
+  // By default, description not initially shown (edit in Description component)
   var el = document.getElementById(id);
   if (el != null) {
     if (el.style.display == "none") {
+      console.log(id + " opening");
       el.style.display = "block";
     } else {
+      console.log(id + " closing");
       el.style.display = "none";
     }
   }
@@ -67,13 +79,20 @@ function removeFromCart(courseList:Array<Course>, courseTitleList:Array<String>,
   if (courseTitleList.includes(newCourseString.title)) {
     setCourseList(courseList.filter(el => el.title != newCourseString.title));
     setCourseTitles(courseTitleList.filter(el => el != newCourseString.title));
+  } else {
+    setCourseList(new Array<Course>());
+    setCourseTitles(new Array<String>());
   }
+}
+
+function checkout(courseList: Array<Course>, courseTitleList: Array<String>, navigate: NavigateFunction) {
+  navigate("/checkout", { state: {courseList: courseList, courseTitleList: courseTitleList} });
 }
 
 const CartContainer = styled.div`
   position: sticky;
   font-size: 30px;
-  width: 50%;
+  width: 40%;
   display: flex;
   flex-direction: column;
   
@@ -134,6 +153,18 @@ const RemFromCartBtn = styled.button`
   border: none;
   border-radius: 5px;
   font-size: 15px;
+  cursor: pointer;
+`
+const CheckoutBtn = styled.button`
+  min-height: 50px;
+  width: 100%;
+  padding: 10px 10px;
+  margin: auto;
+  margin-top: 20px;
+  background-color: 115, 255, 145; // rgb(179, 237, 255);
+  border: none;
+  border-radius: 5px;
+  font-size: 22px;
   cursor: pointer;
 `
 
