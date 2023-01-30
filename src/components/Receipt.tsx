@@ -1,8 +1,5 @@
-import courses from '../data/courses.json'
-import React, { useEffect, useState, useRef } from "react";
 import styled from 'styled-components';
 import { CheckoutProps } from './Checkout';
-import { Course } from '../App';
 
 const Receipt = ({courseList, courseTitleList}: CheckoutProps) => (
     <CoursesPageContainer style={WideStyle}>
@@ -21,8 +18,6 @@ const Receipt = ({courseList, courseTitleList}: CheckoutProps) => (
                 <p className='description' id={dept+"-"+number}>
                 Description:<br></br>
                 {description}<br></br>
-                {/* Prereqs:<br></br>
-                {prereqs} */}
                 </p>
             </CourseItem>
             ))
@@ -52,12 +47,10 @@ const CourseList = styled.div`
   flex-direction: column;
   padding-right: 10%;
 `
-
 const CourseItem = styled.div`
   width: 100%;
   // border: 1px solid blue;
 `
-
 const CoursesPageContainer = styled.div`
   width: 70%;
   display: flex;

@@ -1,5 +1,4 @@
 import {CapacityPopupProps} from "./Home"
-import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { BiXCircle } from 'react-icons/bi'
 
@@ -24,7 +23,6 @@ const Header = styled.div`
     width: 80%; 
     margin: auto;
 `
-
 const StyledBiXCircle = styled(BiXCircle)`
     left: 100%; 
     transform: translateX(-100%); 
@@ -50,39 +48,4 @@ const Container = styled.div`
     flex-direction: column; 
     align-items: center; 
 `
-const FriendBoxContainer = styled.div`
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    width: 80%;
-    overflow-y: auto;
-`
-
-const FriendBox = styled.div`
-    padding: 20px; 
-    font-size: 30px; 
-    display: inline-flex;   
-    width: 50%;
-    margin: 20px;
-    z-index: 3;
-    box-shadow: 1.7px 3.4px 3.4px hsl(0deg 0% 0% / 0.2);
-    border-radius: 10px;
-    background-color: #fdfdfd;
-`
-const Image = styled.img`
-    height: 40px;
-    width: 40px; 
-    border-radius: 50%;
-    margin-right: 20%;
-`
-
-const EmptyMsg = styled.div`
-    padding: 20px;
-    margin: 20px;
-    text-align: center;
-    width: 100%;
-    font-size: 30px; 
-    display: inline-flex;
-`
-
 export default CapacityPopup 

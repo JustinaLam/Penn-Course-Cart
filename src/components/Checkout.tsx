@@ -1,32 +1,24 @@
 import '../App.css';
 import styled from 'styled-components';
-import Nav from './Nav';
-import Courses from './Courses';
-import Cart from './Cart';
 import CapacityPopup from './CapacityPopup';
 import Receipt from './Receipt';
 import {Course} from '../App'
-// import {AppContext} from '../App'
 import { useNavigate, useLocation } from 'react-router-dom';
-
-import { KeyboardEventHandler } from 'react';
 import React, { useEffect, useState, useRef, createContext } from "react";
 import SimpleHeader from './SimpleHeader';
 
 export interface CheckoutProps {
   courseList: Array<Course>;
   courseTitleList: Array<String>;
+  cartVisible: boolean;
 }
 
 function Checkout() {
   const {state} = useLocation();
   const [courseList] = useState(state ? state.courseList : new Array<Course>);
   const [courseTitleList] = useState(state ? state.courseTitleList : new Array<String>);
-  const [cartVisible, setCartVisibility] = useState(false);
+  const [cartVisible] = useState(state ? state.cartVisible : false);
   const [capacityPopup, setCapacityPopup] = useState(false);
-  const [filterVisible, setFilterVisibility] = useState(false);
-  const [min, setMin] = useState<Number>(0);
-  const [max, setMax] = useState<Number>(8000);
 
   return (
     <>
@@ -35,14 +27,9 @@ function Checkout() {
                       setCapacityPopup={setCapacityPopup}/>
       }
       <Container>
-        <SimpleHeader courseList={courseList} courseTitleList={courseTitleList}/>
+        <SimpleHeader courseList={courseList} courseTitleList={courseTitleList} cartVisible={cartVisible}/>
         <Page>
-          <Receipt courseList={courseList} courseTitleList={courseTitleList}/>
-          {/* <Cart courseList={courseList} 
-                setCourseList={setCourses} 
-                courseTitleList={courseTitleList} 
-                setCourseTitles={setCourseTitles} 
-                cartVisible={cartVisible}/> */}
+          <Receipt courseList={courseList} courseTitleList={courseTitleList} cartVisible={cartVisible}/>
         </Page>
       </Container>
     </>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation, NavigateFunction } from 'react-router-dom';
-import RLDD from "react-list-drag-and-drop/lib/RLDD";
 import styled from 'styled-components';
 import { CartProps } from "./Home";
 import { Course } from '../App';
@@ -53,18 +52,26 @@ const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cart
     dragOverItem.current = null;
   };
 
+  function clear() {
+    setCourseList(new Array<Course>());
+    setCourseTitles(new Array<String>());
+  }
+
   return (
   <>
   {cartVisible &&
     <CartContainer>
       <CartInnerContainer>
         <SectionHeader>
-          Course Cart<CloseAllBtn onClick={() => closeAllDescriptions(courseList)}>Close All</CloseAllBtn>
+          Course Cart
+          <CartBtns>
+          <CartBtn onClick={clear}>Clear Cart</CartBtn>
+          <CartBtn onClick={() => closeAllDescriptions(courseList)}>Close All</CartBtn>
+          </CartBtns>
         </SectionHeader>
         { courseList.length > 0 ? 
         // Course list is not empty - display courses in user's cart
-          ( 
-            courseList.map(({dept, number, title, description},index) => (
+          ( courseList.map(({dept, number, title, description},index) => (
               // Enable dragging
               <CourseItem id={dept + ' ' + number}
                           key={index} 
@@ -73,7 +80,8 @@ const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cart
                           onDragEnter={(e) => dragEnter(e,index)}
                           onDragOver={(e) => e.preventDefault()}
                           onDragLeave={leave}
-                          onDragEnd={drop}>
+                          onDragEnd={drop}
+                          onDrop={(e) => e.preventDefault()}>
                 {/* Course department, number, and title */}
                 <CourseListing onClick={() => toggleDescription("cart-"+dept+"-"+number)}>
                   <DraggableIcon src="https://user-images.githubusercontent.com/88551260/215374214-9106088f-d761-46f8-90b3-76908994e410.png"/>
@@ -99,7 +107,7 @@ const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cart
         }
         {/* Checkout Button */}
         { courseList.length > 0 &&
-        <CheckoutBtn onClick={() => checkout(courseList, courseTitleList, navigate)}>
+        <CheckoutBtn onClick={() => checkout(courseList, courseTitleList, cartVisible, navigate)}>
           Check Out
         </CheckoutBtn>
         }
@@ -114,18 +122,15 @@ function toggleDescription(id: string, val?:boolean) {
   // By default, description not initially shown (edit in Description component)
   var el = document.getElementById(id);  
   if (el != null) {
-    console.log(el);
     // New value given (e.g. for close all)
     if (typeof val !== 'undefined') {
       el.style.display = val ? "block" : "none";
     } 
     // Just clicked
     else if (el.style.display == "block") {
-      console.log(id + " closing");
       el.style.display = "none";
     }
     else {
-      console.log(id + " opening");
       el.style.display = "block";
     } 
   }
@@ -141,6 +146,7 @@ function removeFromCart(courseList:Array<Course>, courseTitleList:Array<String>,
                         newCourseString: {dept:String, number:Number, title:String, description:String}, 
                         setCourseList: (courseList: Array<Course>) => void, 
                         setCourseTitles: (courseTitleList: Array<String>) => void) {
+  toggleDescription("cart-"+newCourseString.dept+"-"+newCourseString.number);
   if (courseTitleList.includes(newCourseString.title)) {
     setCourseList(courseList.filter(el => el.title != newCourseString.title));
     setCourseTitles(courseTitleList.filter(el => el != newCourseString.title));
@@ -150,8 +156,8 @@ function removeFromCart(courseList:Array<Course>, courseTitleList:Array<String>,
   }
 }
 
-function checkout(courseList: Array<Course>, courseTitleList: Array<String>, navigate: NavigateFunction) {
-  navigate("/checkout", { state: {courseList: courseList, courseTitleList: courseTitleList} });
+function checkout(courseList: Array<Course>, courseTitleList: Array<String>, cartVisible: boolean, navigate: NavigateFunction) {
+  navigate("/checkout", { state: {courseList: courseList, courseTitleList: courseTitleList, cartVisible: cartVisible} });
 }
 
 const CartContainer = styled.div`
@@ -223,19 +229,23 @@ const RemFromCartBtn = styled.button`
   font-size: 15px;
   cursor: pointer;
 `
-const CloseAllBtn = styled.button`
+const CartBtns = styled.div`
   position: absolute;
   right: 5%;
+  display: flex;
+  flex-direction: row;
+`
+const CartBtn = styled.button`
   min-height: 25px;
   min-width: 50px;
   padding: 10px 10px;
+  margin-left: 15px;
   background-color: #efefef;
   border: none;
   border-radius: 5px;
   font-size: 15px;
   cursor: pointer;
 `
-
 const CheckoutBtn = styled.button`
   min-height: 50px;
   width: 100%;

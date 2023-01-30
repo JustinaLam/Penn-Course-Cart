@@ -1,6 +1,4 @@
 import courses from '../data/courses.json'
-import React, { useEffect, useState, useRef } from "react";
-import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { CoursesProps } from './Home';
 import { Course } from '../App';
@@ -36,8 +34,6 @@ const Courses = ({input, courseList, setCourseList, courseTitleList, setCourseTi
             <p className='description' id={dept+"-"+number}>
               Description:<br></br>
               {description}<br></br>
-              {/* Prereqs:<br></br>
-              {prereqs} */}
               {courseTitleList.includes(title) ? 
               <button className="grayAddToCartBtn">
                 In cart
@@ -78,27 +74,24 @@ const Courses = ({input, courseList, setCourseList, courseTitleList, setCourseTi
                       (item.dept + " " + item.number).toLowerCase().includes(input.toLowerCase()) ||
                       (item.dept + "-" + item.number).toLowerCase().includes(input.toLowerCase())))
         .map(({dept, number, title, description}, index) => (
-        <CourseItem key={index}>
-          <p className='courseListing' onClick={() => toggleDescription(dept+"-"+number)}>
-            {dept}
-            {' '}
-            {number}
-            {': '}
-            {title}
+          <CourseItem key={index}>
+          <p className={courseTitleList.includes(title) ? 'grayCourseListing': 'courseListing'} onClick={() => toggleDescription(dept+"-"+number)}>
+            {dept + ' ' + number + ': ' + title}
           </p>
           <p className='description' id={dept+"-"+number}>
-            Description:
-            <br></br>
-            {description}
-            <br></br>
-            {/* Prereqs:
-            <br></br>
-            {prereqs} */}
+            Description:<br></br>
+            {description}<br></br>
+            {courseTitleList.includes(title) ? 
+            <button className="grayAddToCartBtn">
+              In cart
+            </button>
+            :
             <button className="addToCartBtn" onClick={() => addToCart(
-                    courseList, courseTitleList, {dept, number, title, description}, 
-                    setCourseList, setCourseTitles, setCapacityPopup)}>
+                  courseList, courseTitleList, {dept, number, title, description}, 
+                  setCourseList, setCourseTitles, setCapacityPopup)}>
               Add To Cart
             </button>
+            }
           </p>
         </CourseItem>
       )))
@@ -116,10 +109,8 @@ function toggleDescription(id: string) {
   var el = document.getElementById(id);
   if (el != null) {
     if (el.style.display == "block") {
-      console.log(id + " closing (main)");
       el.style.display = "none";
     } else {
-      console.log(id + " opening (main)");
       el.style.display = "block";
     }
   }
@@ -159,19 +150,16 @@ const CourseList = styled.div`
   flex-direction: column;
   padding-right: 10%;
 `
-
 const CourseItem = styled.div`
   width: 100%;
   // border: 1px solid blue;
 `
-
 const CoursesPageContainer = styled.div`
   width: 70%;
   display: flex;
   flex-direction: column;
   // border: 1px solid red;
 `
-
 const WideStyle = {
   width: '80%'
 }
