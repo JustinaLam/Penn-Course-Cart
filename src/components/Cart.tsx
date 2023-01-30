@@ -1,46 +1,98 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation, NavigateFunction } from 'react-router-dom';
+import RLDD from "react-list-drag-and-drop/lib/RLDD";
 import styled from 'styled-components';
 import { CartProps } from "./Home";
 import { Course } from '../App';
 
 const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cartVisible}: CartProps) => {
   const navigate = useNavigate();
+  
+  const [currCourse, setCurrCourse] = useState<Course | null>(null);
+  const [currPos, setCurrPos] = useState(0);
+  const dragItem = useRef<HTMLElement | null>(null);
+  const dragOverItem = useRef<HTMLElement | null>(null);
+
+  const dragStart = (e: React.DragEvent<HTMLDivElement>, position:number) => {
+    // Start dragging a course
+    dragItem.current = document.getElementById(e.currentTarget.id);
+    if (dragItem.current != null) {
+      dragItem.current.style.backgroundColor = "#efefef";
+    }
+    setCurrPos(position);
+    setCurrCourse(courseList[position]);
+  }
+  const dragEnter = (e: React.DragEvent<HTMLDivElement>, position:number) => {
+    e.preventDefault();
+    // Make current hover target gray
+    dragOverItem.current = document.getElementById(e.currentTarget.id);
+    if (dragOverItem.current != null)
+      dragOverItem.current.style.backgroundColor = "#efefef";
+    // Move selected course to the current position
+    if (currCourse != null) {
+      courseList.splice(currPos, 1);
+      courseList.splice(position, 0, currCourse);
+    }
+    setCurrPos(position);
+    setCourseList(courseList);
+  };
+  const leave = (e: React.DragEvent<HTMLDivElement>) => {
+    // Reset color of item dragged over
+    if (dragOverItem.current != null) 
+      dragOverItem.current.style.backgroundColor = "white";
+    dragOverItem.current = null;
+  }
+  const drop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (dragItem.current != null) 
+      dragItem.current.style.backgroundColor = "white";
+    if (dragOverItem.current != null) 
+      dragOverItem.current.style.backgroundColor = "white";
+
+    dragItem.current = null;
+    dragOverItem.current = null;
+  };
+
   return (
   <>
   {cartVisible &&
     <CartContainer>
       <CartInnerContainer>
         <SectionHeader>
-          Course Cart
+          Course Cart<CloseAllBtn onClick={() => closeAllDescriptions(courseList)}>Close All</CloseAllBtn>
         </SectionHeader>
         { courseList.length > 0 ? 
         // Course list is not empty - display courses in user's cart
-          ( courseList.map(({dept, number, title, description},index) => (
-              <CourseItem key={index}>
+          ( 
+            courseList.map(({dept, number, title, description},index) => (
+              // Enable dragging
+              <CourseItem id={dept + ' ' + number}
+                          key={index} 
+                          draggable 
+                          onDragStart={(e) => dragStart(e,index)}
+                          onDragEnter={(e) => dragEnter(e,index)}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDragLeave={leave}
+                          onDragEnd={drop}>
                 {/* Course department, number, and title */}
                 <CourseListing onClick={() => toggleDescription("cart-"+dept+"-"+number)}>
+                  <DraggableIcon src="https://user-images.githubusercontent.com/88551260/215374214-9106088f-d761-46f8-90b3-76908994e410.png"/>
                   {dept + ' ' + number + ': ' + title}
                 </CourseListing>
                 {/* Course description */}
-                <Description id={"cart-"+dept+"-"+number}>
-                  Description:
-                  <br></br>
-                  {description}
-                  <br></br>
-                  {/* Prereqs:
-                  <br></br>
-                  {prereqs} */}
-                  {/* Button to remove course from cart */}
-                  <RemFromCartBtn onClick={() => removeFromCart(courseList, courseTitleList, {dept, number, title, description}, setCourseList, setCourseTitles)}>
-                    Remove From Cart
-                  </RemFromCartBtn>
-                </Description>
+                  <Description id={"cart-"+dept+"-"+number}>
+                    Description:
+                    <br></br>
+                    {description}
+                    <br></br>
+                    {/* Button to remove course from cart */}
+                    <RemFromCartBtn onClick={() => removeFromCart(courseList, courseTitleList, {dept, number, title, description}, setCourseList, setCourseTitles)}>
+                      Remove From Cart
+                    </RemFromCartBtn>
+                  </Description>
               </CourseItem>
             ))
-          )
-          :
-          (
+          ) : (
             // Course cart is empty - display a short message to user
             <SmallMessage>Your course cart is empty! <br></br>Add some courses to get started.</SmallMessage>
           )
@@ -58,17 +110,30 @@ const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cart
   );
 }
 
-function toggleDescription(id: string) {
+function toggleDescription(id: string, val?:boolean) {
   // By default, description not initially shown (edit in Description component)
-  var el = document.getElementById(id);
+  var el = document.getElementById(id);  
   if (el != null) {
-    if (el.style.display == "none") {
-      console.log(id + " opening");
-      el.style.display = "block";
-    } else {
+    console.log(el);
+    // New value given (e.g. for close all)
+    if (typeof val !== 'undefined') {
+      el.style.display = val ? "block" : "none";
+    } 
+    // Just clicked
+    else if (el.style.display == "block") {
       console.log(id + " closing");
       el.style.display = "none";
     }
+    else {
+      console.log(id + " opening");
+      el.style.display = "block";
+    } 
+  }
+}
+
+function closeAllDescriptions(courseList:Array<Course>) {
+  for (var c in courseList) {
+    toggleDescription("cart-" + courseList[c].dept + "-" + courseList[c].number, false);
   }
 }
 
@@ -107,43 +172,46 @@ position: sticky;
   border-radius: 20px 0 0 20px;
   padding: 1.5rem;
 `
-
 const SectionHeader = styled.div`
   font-size: 30px;
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
 `
 const SmallMessage = styled.div`
   font-size: 18px;
   margin-top: 20px;
 `
-
 const CourseList = styled.div`
   display: flex;
   flex-direction: column;
   padding-right: 10%;
 `
-
 const CourseItem = styled.div`
   width: 100%;
-  // border: 1px solid blue;
 `
-
-const CourseListing = styled.p`
+const DraggableIcon = styled.img`
+  // max-width: 15px;
+  max-height: 25px;
+  margin: 0 10px;
+`
+const Description = styled.p`
+    display: none;
+    font-size: 15px;
+    margin-left: 20px;
+    color: rgb(80,80,80);
+    z-index: 1;
+  `
+const CourseListing = styled.div`
   font-size: 20px;
   border: 1px solid rgb(0,0,0,0.2);
   border-radius: 10px;
   padding: 20px 15px;
+  margin: 20px 0;
   cursor: default;
+  display: flex;
+  flex-direction: row;
 `
-
-const Description = styled.p`
-  display: block;
-  font-size: 15px;
-  margin-left: 20px;
-  color: rgb(80,80,80);
-  z-index: 1;
-`
-
 const RemFromCartBtn = styled.button`
   min-height: 25px;
   min-width: 50px;
@@ -155,11 +223,23 @@ const RemFromCartBtn = styled.button`
   font-size: 15px;
   cursor: pointer;
 `
+const CloseAllBtn = styled.button`
+  position: absolute;
+  right: 5%;
+  min-height: 25px;
+  min-width: 50px;
+  padding: 10px 10px;
+  background-color: #efefef;
+  border: none;
+  border-radius: 5px;
+  font-size: 15px;
+  cursor: pointer;
+`
+
 const CheckoutBtn = styled.button`
   min-height: 50px;
   width: 100%;
   padding: 10px 10px;
-  margin: auto;
   margin-top: 20px;
   background-color: 115, 255, 145; // rgb(179, 237, 255);
   border: none;
