@@ -1,5 +1,8 @@
 # Frontend Challenge Fall '22
 
+----------------- Please feel free to reach out if there are any issues; I also have a demo video prepared, if necessary. Thank you! ----------------- 
+
+
 Welcome to the Penn Labs Frontend Challenge!
 
 If you have already done this challenge, there's a [section below](https://www.notion.so/Frontend-Challenge-Fall-22-d6c03559ee1d4f1f9f56aa6836b7caba) for you. 
