@@ -1,6 +1,8 @@
 # Frontend Challenge Fall '22
 
------------------ Please feel free to reach out if there are any issues; I also have a demo video prepared, if necessary. Thank you! ----------------- 
+---------------------------------------------------
+Please feel free to reach out if there are any issues; I also have a demo video prepared, if necessary. Thank you! 
+---------------------------------------------------
 
 
 Welcome to the Penn Labs Frontend Challenge!
