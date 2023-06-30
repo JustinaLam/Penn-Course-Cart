@@ -3,6 +3,8 @@
 **Video Demo:**
 https://github.com/JustinaLam/Penn-Course-Cart/assets/88551260/f84c4021-060a-4273-9e09-ef257371422b
 
+------------------------------------------------------------------------------------------------------------------
+
 Welcome to the Penn Labs Frontend Challenge!
 
 If you have already done this challenge, there's a [section below](https://www.notion.so/Frontend-Challenge-Fall-22-d6c03559ee1d4f1f9f56aa6836b7caba) for you. 
