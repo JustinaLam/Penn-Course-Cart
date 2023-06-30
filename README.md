@@ -1,6 +1,6 @@
 # PennLabs Frontend Challenge Spring '23
 
-Video Demo:
+**Video Demo:**
 https://github.com/JustinaLam/Penn-Course-Cart/assets/88551260/f84c4021-060a-4273-9e09-ef257371422b
 
 Welcome to the Penn Labs Frontend Challenge!
