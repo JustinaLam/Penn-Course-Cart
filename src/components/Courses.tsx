@@ -3,52 +3,62 @@ import styled from 'styled-components';
 import { CoursesProps } from './Home';
 import { Course } from '../App';
 
+// Courses list on home page
 const Courses = ({input, courseList, setCourseList, courseTitleList, setCourseTitles, cartVisible, setCapacityPopup, min, max}: CoursesProps) => (
   <>
     <CoursesPageContainer style={cartVisible ? NarrowStyle : WideStyle}>
       <CourseList>
-      {/* Courses whose title or department contains search input */}
+      {/* Display courses whose _title or department_ contains search input */}
       <SectionHeader>
         Matching Courses
       </SectionHeader>
+      {/* Case on whether such courses exist: */}
       {courses
         .filter(item => (item.title.toLowerCase().includes(input.toLowerCase()) || 
                         (item.dept + "" + item.number).toLowerCase().includes(input.toLowerCase()) ||
                         (item.dept + " " + item.number).toLowerCase().includes(input.toLowerCase()) ||
                         (item.dept + "-" + item.number).toLowerCase().includes(input.toLowerCase()))
                         &&
-                        (item.number >= min && item.number <= max))
+                        (item.number >= Number(min) && item.number <= Number(max)))
         .length > 0 ?
+        // If such courses exist, display them
         (courses
           .filter(item => (item.title.toLowerCase().includes(input.toLowerCase()) || 
                         (item.dept + "" + item.number).toLowerCase().includes(input.toLowerCase()) ||
                         (item.dept + " " + item.number).toLowerCase().includes(input.toLowerCase()) ||
                         (item.dept + "-" + item.number).toLowerCase().includes(input.toLowerCase()))
                         &&
-                        (item.number >= min && item.number <= max))
+                        (item.number >= Number(min) && item.number <= Number(max)))
           .map(({dept, number, title, description}, index) => (
-          <CourseItem key={index}>
-            <p className={courseTitleList.includes(title) ? 'grayCourseListing': 'courseListing'} onClick={() => toggleDescription(dept+"-"+number)}>
-              {dept + ' ' + number + ': ' + title}
-            </p>
-            <p className='description' id={dept+"-"+number}>
-              Description:<br></br>
-              {description}<br></br>
-              {courseTitleList.includes(title) ? 
-              <button className="grayAddToCartBtn">
-                In cart
-              </button>
-              :
-              <button className="addToCartBtn" onClick={() => addToCart(
-                    courseList, courseTitleList, {dept, number, title, description}, 
-                    setCourseList, setCourseTitles, setCapacityPopup)}>
-                Add To Cart
-              </button>
-              }
-            </p>
-          </CourseItem>
-        )))
+            // A container initially showing course code and title; 
+            // when clicked, the course description and "Add to Cart" button appear (toggleable)
+            <CourseItem key={index}>
+              <p className={courseTitleList.includes(title) ? 'grayCourseListing': 'courseListing'} onClick={() => toggleDescription(dept+"-"+number)}>
+                {dept + ' ' + number + ': ' + title}
+              </p>
+              <p className='description' id={dept+"-"+number}>
+                {/* Course description */}
+                Description:<br></br>
+                {description}<br></br>
+                {courseTitleList.includes(title) ? 
+                  // If course is already in cart, grey out the "Add to Cart" button
+                  <button className="grayAddToCartBtn">
+                    In cart
+                  </button>
+                :
+                  // Otherwise, show an active "Add to Cart" button
+                  <button className="addToCartBtn" onClick={() => addToCart(
+                        courseList, courseTitleList, {dept, number, title, description}, 
+                        setCourseList, setCourseTitles, setCapacityPopup)}>
+                    Add To Cart
+                  </button>
+                }
+              </p>
+            </CourseItem>
+          ))
+        )
         :
+        // If no such courses exist, display the appropriate message
         <SmallMessage>
           There are no courses whose titles match this search.
         </SmallMessage>
@@ -56,46 +66,55 @@ const Courses = ({input, courseList, setCourseList, courseTitleList, setCourseTi
       </CourseList>
       <CourseList>
 
-      {/* Courses whose description contains search input, but not title */}
+      {/* Display courses whose _description_ contains search input, but not title */}
       <SectionHeader>
         Matching Descriptions
       </SectionHeader>
+      {/* Case on whether such courses exist: */}
       {courses.filter(item => item.description.toLowerCase().includes(input.toLowerCase()) &&
-                      (item.number >= min && item.number <= max) &&
+                      (item.number >= Number(min) && item.number <= Number(max)) &&
                       !(item.title.toLowerCase().includes(input.toLowerCase()) || 
                       (item.dept + "" + item.number).toLowerCase().includes(input.toLowerCase()) ||
                       (item.dept + " " + item.number).toLowerCase().includes(input.toLowerCase()) ||
                       (item.dept + "-" + item.number).toLowerCase().includes(input.toLowerCase())))
               .length > 0 ?
+      // If such courses exist, display them
       (courses
         .filter(item => item.description.toLowerCase().includes(input.toLowerCase()) &&
-                      (item.number >= min && item.number <= max) &&
+                      (item.number >= Number(min) && item.number <= Number(max)) &&
                       !(item.title.toLowerCase().includes(input.toLowerCase()) || 
                       (item.dept + " " + item.number).toLowerCase().includes(input.toLowerCase()) ||
                       (item.dept + "-" + item.number).toLowerCase().includes(input.toLowerCase())))
         .map(({dept, number, title, description}, index) => (
-          <CourseItem key={index}>
-          <p className={courseTitleList.includes(title) ? 'grayCourseListing': 'courseListing'} onClick={() => toggleDescription(dept+"-"+number)}>
-            {dept + ' ' + number + ': ' + title}
-          </p>
-          <p className='description' id={dept+"-"+number}>
-            Description:<br></br>
-            {description}<br></br>
-            {courseTitleList.includes(title) ? 
-            <button className="grayAddToCartBtn">
-              In cart
-            </button>
-            :
-            <button className="addToCartBtn" onClick={() => addToCart(
-                  courseList, courseTitleList, {dept, number, title, description}, 
-                  setCourseList, setCourseTitles, setCapacityPopup)}>
-              Add To Cart
-            </button>
-            }
-          </p>
-        </CourseItem>
-      )))
+            // A container initially showing course code and title; 
+            // when clicked, the course description and "Add to Cart" button appear (toggleable)
+            <CourseItem key={index}>
+            <p className={courseTitleList.includes(title) ? 'grayCourseListing': 'courseListing'} onClick={() => toggleDescription(dept+"-"+number)}>
+              {dept + ' ' + number + ': ' + title}
+            </p>
+            <p className='description' id={dept+"-"+number}>
+              {/* Course description */}
+              Description:<br></br>
+              {description}<br></br>
+              {courseTitleList.includes(title) ? 
+                // If course is already in cart, grey out the "Add to Cart" button
+                <button className="grayAddToCartBtn">
+                  In cart
+                </button>
+              :
+                // Otherwise, show an active "Add to Cart" button
+                <button className="addToCartBtn" onClick={() => addToCart(
+                      courseList, courseTitleList, {dept, number, title, description}, 
+                      setCourseList, setCourseTitles, setCapacityPopup)}>
+                  Add To Cart
+                </button>
+              }
+            </p>
+          </CourseItem>
+        ))
+      )
       :
+      // If no such courses exist, display the appropriate message
       <SmallMessage>
         There are no courses that match this search in description only.
       </SmallMessage>
@@ -104,7 +123,7 @@ const Courses = ({input, courseList, setCourseList, courseTitleList, setCourseTi
     </CoursesPageContainer>
   </>
 )
-
+// Toggle (on click) whether course description is visible
 function toggleDescription(id: string) {
   var el = document.getElementById(id);
   if (el != null) {
@@ -115,7 +134,7 @@ function toggleDescription(id: string) {
     }
   }
 }
-
+// Add a selected course to the user's cart
 function addToCart(courseList:Array<Course>, courseTitleList:Array<String>, 
                   newCourseString: {dept:String, number:Number, title:String, description:String}, 
                   setCourseList: (courseList: Array<Course>) => void, 
@@ -124,7 +143,7 @@ function addToCart(courseList:Array<Course>, courseTitleList:Array<String>,
   // Make sure this course is not in cart already
   if (!courseTitleList.includes(newCourseString.title)) {
     if(courseTitleList.length < 7) {
-      // Add course to cart lists
+      // Add course to cart lists if within capacity
       setCourseList(courseList.concat(newCourseString));
       setCourseTitles(courseTitleList.concat(newCourseString.title));
     } else if (courseTitleList.length >= 7) {
@@ -152,13 +171,11 @@ const CourseList = styled.div`
 `
 const CourseItem = styled.div`
   width: 100%;
-  // border: 1px solid blue;
 `
 const CoursesPageContainer = styled.div`
   width: 70%;
   display: flex;
   flex-direction: column;
-  // border: 1px solid red;
 `
 const WideStyle = {
   width: '80%'

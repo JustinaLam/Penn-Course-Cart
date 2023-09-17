@@ -4,6 +4,9 @@ import styled from 'styled-components';
 import { CartProps } from "./Home";
 import { Course } from '../App';
 
+// Cart section of page with toggleable visibility, showing courses in user's cart 
+// (with descriptions that appear on click), a button to remove a course from cart,
+// and buttons to clear cart or close descriptions of all courses in cart
 const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cartVisible}: CartProps) => {
   const navigate = useNavigate();
   
@@ -12,8 +15,8 @@ const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cart
   const dragItem = useRef<HTMLElement | null>(null);
   const dragOverItem = useRef<HTMLElement | null>(null);
 
+  // Start dragging a course
   const dragStart = (e: React.DragEvent<HTMLDivElement>, position:number) => {
-    // Start dragging a course
     dragItem.current = document.getElementById(e.currentTarget.id);
     if (dragItem.current != null) {
       dragItem.current.style.backgroundColor = "#efefef";
@@ -21,6 +24,7 @@ const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cart
     setCurrPos(position);
     setCurrCourse(courseList[position]);
   }
+  // Mouse enters a course container
   const dragEnter = (e: React.DragEvent<HTMLDivElement>, position:number) => {
     e.preventDefault();
     // Make current hover target gray
@@ -35,12 +39,14 @@ const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cart
     setCurrPos(position);
     setCourseList(courseList);
   };
+  // Mouse leaves course container
   const leave = (e: React.DragEvent<HTMLDivElement>) => {
     // Reset color of item dragged over
     if (dragOverItem.current != null) 
       dragOverItem.current.style.backgroundColor = "white";
     dragOverItem.current = null;
   }
+  // User drops a dragged course
   const drop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (dragItem.current != null) 
@@ -51,7 +57,7 @@ const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cart
     dragItem.current = null;
     dragOverItem.current = null;
   };
-
+  // Clear all courses from cart
   function clear() {
     setCourseList(new Array<Course>());
     setCourseTitles(new Array<String>());
@@ -117,7 +123,7 @@ const Cart = ({courseList, setCourseList, courseTitleList, setCourseTitles, cart
   </>
   );
 }
-
+// Toggle (on click) whether a course's description is visible
 function toggleDescription(id: string, val?:boolean) {
   // By default, description not initially shown (edit in Description component)
   var el = document.getElementById(id);  
@@ -135,13 +141,13 @@ function toggleDescription(id: string, val?:boolean) {
     } 
   }
 }
-
+// Close descriptions for all courses in cart
 function closeAllDescriptions(courseList:Array<Course>) {
   for (var c in courseList) {
     toggleDescription("cart-" + courseList[c].dept + "-" + courseList[c].number, false);
   }
 }
-
+// Remove a course from cart
 function removeFromCart(courseList:Array<Course>, courseTitleList:Array<String>, 
                         newCourseString: {dept:String, number:Number, title:String, description:String}, 
                         setCourseList: (courseList: Array<Course>) => void, 
@@ -155,7 +161,7 @@ function removeFromCart(courseList:Array<Course>, courseTitleList:Array<String>,
     setCourseTitles(new Array<String>());
   }
 }
-
+// Checkout courses
 function checkout(courseList: Array<Course>, courseTitleList: Array<String>, cartVisible: boolean, navigate: NavigateFunction) {
   navigate("/checkout", { state: {courseList: courseList, courseTitleList: courseTitleList, cartVisible: cartVisible} });
 }
@@ -174,9 +180,10 @@ const CartContainer = styled.div`
 const CartInnerContainer = styled.div`
 position: sticky;
   border: 1px solid rgba(1, 31, 91, 0.4);
-  border-right: 0px;
-  border-radius: 20px 0 0 20px;
+  // border-right: 0px;
+  border-radius: 20px;
   padding: 1.5rem;
+  margin-right: 15px;
 `
 const SectionHeader = styled.div`
   font-size: 30px;

@@ -12,23 +12,19 @@ export interface CheckoutProps {
   courseTitleList: Array<String>;
   cartVisible: boolean;
 }
-
+// Page displayed for route '/checkout' (when user checks out cart)
 function Checkout() {
   const {state} = useLocation();
-  const [courseList] = useState(state ? state.courseList : new Array<Course>);
-  const [courseTitleList] = useState(state ? state.courseTitleList : new Array<String>);
+  const [courseList] = useState(state ? state.courseList : new Array<Course>());
+  const [courseTitleList] = useState(state ? state.courseTitleList : new Array<String>());
   const [cartVisible] = useState(state ? state.cartVisible : false);
-  const [capacityPopup, setCapacityPopup] = useState(false);
 
   return (
     <>
-      {capacityPopup && 
-        <CapacityPopup  capacityPopup={capacityPopup}
-                      setCapacityPopup={setCapacityPopup}/>
-      }
       <Container>
         <SimpleHeader courseList={courseList} courseTitleList={courseTitleList} cartVisible={cartVisible}/>
         <Page>
+          {/* Receipt list of courses the user has added to their cart */}
           <Receipt courseList={courseList} courseTitleList={courseTitleList} cartVisible={cartVisible}/>
         </Page>
       </Container>

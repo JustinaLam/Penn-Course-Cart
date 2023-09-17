@@ -1,16 +1,18 @@
 import styled from 'styled-components';
 import { CheckoutProps } from './Checkout';
 
+// Page displayed when the user checks out their cart
 const Receipt = ({courseList, courseTitleList}: CheckoutProps) => (
     <CoursesPageContainer style={WideStyle}>
       <CourseList>
-      {/* Courses whose title or department contains search input */}
       <SectionHeader>
         Check Out: Your Course Cart Receipt
       </SectionHeader>
+      {/* Simple list of courses in the user's cart at the time of checkout */}
       <ReceiptList>
         {courseList.length > 0 ?
         (courseList.map(({dept, number, title, description}, index) => (
+            // For each course, display the course code and title
             <CourseItem key={index}>
                 <p className='receiptListing'>
                 {dept + ' ' + number + ': ' + title}
@@ -23,6 +25,7 @@ const Receipt = ({courseList, courseTitleList}: CheckoutProps) => (
             ))
         ):
         (
+            // If cart size is 0, display the appropriate message
             <SmallMessage>
                 Your course cart is empty.
             </SmallMessage>

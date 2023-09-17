@@ -1,5 +1,4 @@
 import './App.css';
-import styled from 'styled-components';
 import Home from './components/Home';
 import Checkout from './components/Checkout';
 import React, { useEffect, useState, useRef, createContext } from "react";
@@ -34,7 +33,9 @@ function App() {
     <AppContext.Provider value={{courseList, setCourseList}}>
       <Router>
         <Routes>
+          {/* Main home page with course list and cart */}
           <Route path="/" element={<Home/>}/> 
+          {/* Checkout page */}
           <Route path="/checkout" element={<Checkout/>}/>
         </Routes>  
       </Router>

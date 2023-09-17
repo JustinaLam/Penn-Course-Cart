@@ -8,10 +8,10 @@ import {Course} from '../App'
 import { useLocation } from 'react-router-dom';
 import React, { useEffect, useState, useRef } from "react";
 
-
+// Arguments passed to Courses
 export interface CoursesProps {
   input: string;
-  courseList: Array<Course>;
+  courseList: Array<Course> ;
   setCourseList: (courseList: Array<Course>) => void;
   courseTitleList: Array<String>;
   setCourseTitles: (courseTitleList: Array<String>) => void;
@@ -20,7 +20,7 @@ export interface CoursesProps {
   min: Number;
   max: Number;
 }
-
+// Arguments passed to Nav (header bar)
 export interface NavProps {
   setSearchInput: (input: string) => void;
   setCartVisibility: (cartVisible: boolean) => void;
@@ -33,7 +33,7 @@ export interface NavProps {
   max: Number;
   setMax: (max: Number) => void;
 }
-
+// Arguments passed to Cart
 export interface CartProps {
   courseList: Array<Course>;
   setCourseList: (courseList: Array<Course>) => void;
@@ -41,30 +41,37 @@ export interface CartProps {
   setCourseTitles: (courseTitleList: Array<String>) => void;
   cartVisible: boolean;
 }
-
+// Arguments passed to CapacityPopup
 export interface CapacityPopupProps {
   capacityPopup: boolean;
   setCapacityPopup: (capacityPopup: boolean) => void;
 }
 
+// Main home page with course list and cart
 function Home() {
-  const [input, setSearch] = useState("");
   const {state} = useLocation();
-  const [courseList, setCourseList] = useState(state ? state.courseList : new Array<Course>);
-  const [courseTitleList, setCourseTitles] = useState(state ? state.courseTitleList : new Array<String>);
+  // Search bar contents
+  const [input, setSearch] = useState("")
+  // Lists of Course objects and course titles in user's cart
+  const [courseList, setCourseList] = useState(state ? state.courseList : new Array<Course>());
+  const [courseTitleList, setCourseTitles] = useState(state ? state.courseTitleList : new Array<String>());
+  // Booleans for whether cart, capacity popup, and navbar filter are visible
   const [cartVisible, setCartVisibility] = useState(state ? state.cartVisible : false);
   const [capacityPopup, setCapacityPopup] = useState(false);
   const [filterVisible, setFilterVisibility] = useState(false);
+  // Lower and upper bounds for filtering courses
   const [min, setMin] = useState<Number>(0);
   const [max, setMax] = useState<Number>(8000);
 
   return (
     <>
+      {/* Popup visible if user has attempted to add more than 7 courses to their cart */}
       {capacityPopup && 
         <CapacityPopup  capacityPopup={capacityPopup}
                       setCapacityPopup={setCapacityPopup}/>
       }
       <Container>
+        {/* Nav: header bar with search bar, cart icon, filter icon, and filter input fields (toggleable) */}
         <Nav  setSearchInput={setSearch} 
               setCartVisibility={setCartVisibility} 
               cartVisible={cartVisible}
@@ -75,7 +82,9 @@ function Home() {
               setMin={setMin}
               max={max}
               setMax={setMax}/>
+        {/* Main page */}
         <Page>
+          {/* Main course list */}
           <Courses  input={input} 
                     courseList={courseList} 
                     setCourseList={setCourseList} 
@@ -85,6 +94,7 @@ function Home() {
                     setCapacityPopup={setCapacityPopup}
                     min={min}
                     max={max}/>
+          {/* User's cart */}
           <Cart courseList={courseList} 
                 setCourseList={setCourseList} 
                 courseTitleList={courseTitleList} 
