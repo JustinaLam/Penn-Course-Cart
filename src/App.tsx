@@ -24,6 +24,12 @@ export interface Course {
   title: String;
   description: String;
 }
+export interface Section {
+  id: String;
+  status: String;
+  days: String;
+  time: String;
+}
 export interface CourseInfo {
   dept: String;
   number: Number;
@@ -33,6 +39,7 @@ export interface CourseInfo {
   instructorQuality: Number;
   difficulty: Number;
   workRequired: Number;
+  sections: Section[];
 }
 
 function App() {

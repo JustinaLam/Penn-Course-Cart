@@ -1,11 +1,15 @@
 import styled from 'styled-components';
 import {Course} from '../App';
 import {CourseInfo} from '../App';
+import {Section} from '../App';
 import { CheckoutProps } from './Checkout';
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from 'react-router-dom';
 
 const semestersList = ['2020C', '2021A', '2021C', '2022A']
+const statusMap = new Map()
+const daysMap = new Map()
+
 
 // Receipt page displayed when the user checks out their cart
 const Receipt = ({courseList, courseTitleList}: CheckoutProps) => {
@@ -13,14 +17,24 @@ const Receipt = ({courseList, courseTitleList}: CheckoutProps) => {
   const [semester, setSemester] = useState<string>("2022A")
   const [coursesInfo, setCoursesInfo] = useState(state && state.coursesInfo ? state.coursesInfo : new Array<CourseInfo>())
 
-  // Call API for a single course; return a Promise 
+  // Set statusMap
+  statusMap.set("O", "Open")
+  statusMap.set("C", "Closed")
+  statusMap.set("X", "Cancelled")
+  statusMap.set("", "Unlisted")
+  // Set daysMap
+  daysMap.set("FMW", "MWF")
+  daysMap.set("RT", "TR")
+  daysMap.set("","Unknown")
+
+  // Function to call API for a single course; return a Promise 
   function callAPICourse(course: Course, semester: string) {
     return new Promise<CourseInfo>((resolve,reject) => {
       fetch('/api/base/' + semester + '/courses/' + course.dept + '-' + course.number + '/')
         .then(res => res.json())
         .then(data => {
           // Create new CourseInfo object for info retrieved from API for this course
-          var newCourseInfo = {
+          const newCourseInfo:CourseInfo = {
             dept: course.dept,
             number: course.number,
             title: course.title,
@@ -29,6 +43,7 @@ const Receipt = ({courseList, courseTitleList}: CheckoutProps) => {
             instructorQuality: -1,
             difficulty: -1,
             workRequired: -1,
+            sections: [],
           }
           if (!data || data.detail == "Not found.") {
             // Course not found by API call; return only course information
@@ -39,13 +54,48 @@ const Receipt = ({courseList, courseTitleList}: CheckoutProps) => {
             newCourseInfo.instructorQuality = data.instructor_quality
             newCourseInfo.difficulty = data.difficulty
             newCourseInfo.workRequired = data.work_required
+            // Lecture sections info
+            const sections:Section[] = []
+            data.sections.forEach((rawSection:any) => {
+              if (rawSection.activity == "LEC") {
+                // Get days the class meets (e.g. MWF)
+                var days = ""
+                var m
+                for (m = 0; m < rawSection.meetings.length; m++) {
+                  days += rawSection.meetings[m].day
+                }
+                // Get time the class meets
+                var time = ""
+                if (days != "") {
+                  // Get start time
+                  var hour = Math.floor(rawSection.meetings[0].start)
+                  var minutes = String(Math.floor((rawSection.meetings[0].start - hour) * 100))
+                  hour = (hour % 12 == 0 ? 12 : hour % 12)
+                  time += hour + ":" + minutes.padStart(2, "0");
+                  // Get end time
+                  hour = Math.floor(rawSection.meetings[0].end)
+                  var minutes = String(Math.floor((rawSection.meetings[0].end - hour) * 100))
+                  hour = (hour % 12 == 0 ? 12 : hour % 12)
+                  time += " - " + hour + ":" + minutes.padStart(2, "0");
+                }
+                // Create Section object for this course lecture section
+                var newSection:Section = {
+                  id: rawSection.id,
+                  status: (statusMap.has(rawSection.status) ? statusMap.get(rawSection.status) : rawSection.status),
+                  days: (daysMap.has(days) ? daysMap.get(days) : days),
+                  time: time,
+                }
+                sections.push(newSection)
+              }
+            })
+            newCourseInfo.sections = sections
           }
           resolve(newCourseInfo)
         })
     });
   }
 
-  // Iterate through courses in cart and call API for information on each
+  // Function to iterate through courses in cart and call API for information on each
   const callAPI = (courseList:Array<Course>, semester:string, coursesInfo:Array<CourseInfo>, setCoursesInfo:(coursesInfo: Array<CourseInfo>) => void) => {
     var results:Promise<CourseInfo>[] = new Array<Promise<CourseInfo>>
     courseList.forEach((course) => {
@@ -99,7 +149,8 @@ const Receipt = ({courseList, courseTitleList}: CheckoutProps) => {
     callAPI(courseList, semester, coursesInfo, setCoursesInfo)
   }, [semester]);
 
-  // Component ultimately returned and rendered:
+
+  // -------------------- Component ultimately returned and rendered: --------------------
   return (
     <CoursesPageContainer style={WideStyle}>
       <CourseList>
@@ -117,7 +168,7 @@ const Receipt = ({courseList, courseTitleList}: CheckoutProps) => {
       {/* Simple list of courses in the user's cart at the time of checkout */}
       <ReceiptList>
         {coursesInfo.length > 0 ?
-        (coursesInfo.map(({dept, number, title, description, courseQuality, instructorQuality, difficulty, workRequired}:CourseInfo, index:number) => (
+        (coursesInfo.map(({dept, number, title, description, courseQuality, instructorQuality, difficulty, workRequired, sections}:CourseInfo, index:number) => (
             // For each course, display the course code and title
             <CourseItem key={index}>
                 <p className='receiptListing'>
@@ -125,12 +176,22 @@ const Receipt = ({courseList, courseTitleList}: CheckoutProps) => {
                 </p>
                 {courseQuality != -1 ? 
                 (
+                  <>
                   <MoreInfo id={"cart-" + dept+"-"+number}>
                   Course Quality: {String(courseQuality)}<br></br>
                   Instructor Quality: {String(instructorQuality)}<br></br>
                   Difficulty: {String(difficulty)}<br></br>
                   Work Required: {String(workRequired)}
                   </MoreInfo>
+                  {sections.map((section,index) => (
+                    <MoreInfo>
+                      LEC Section: {String(section.id)}<br></br>
+                      Status: {String(section.status)}<br></br>
+                      Days: {String(section.days)}<br></br>
+                      Time: {String(section.time)}
+                    </MoreInfo>
+                  ))}
+                  </>
                 )
                 :
                 (<MoreInfo>Not found in system for this semester.</MoreInfo>)
@@ -139,22 +200,28 @@ const Receipt = ({courseList, courseTitleList}: CheckoutProps) => {
             ))
         ):
         (<>
-        {courseList.length > 0 ?
-          (courseList.map(({dept, number, title, description}, index) => (
-            // For each course that was not recognized by the API, display only course code and title
-            <CourseItem key={index}>
-                <p className='receiptListing'>
-                {dept + ' ' + number + ': ' + title}
-                </p>
-            </CourseItem>
-            ))
-          ) 
-          :
-            // If cart size is 0, display the appropriate message
-            <SmallMessage>
-                Your course cart is empty.
-            </SmallMessage>
-        }</>)
+          <SmallMessage>
+            <br></br>Loading API results...
+          </SmallMessage>
+          {courseList.length > 0 ?
+            (courseList.map(({dept, number, title, description}, index) => (
+              // For each course that was not recognized by the API, display only course code and title
+              <CourseItem key={index}>
+                  <p className='receiptListing'>
+                  {dept + ' ' + number + ': ' + title}
+                  </p>
+              </CourseItem>
+              ))
+            ) 
+            :
+            (
+              // If cart size is 0, display the appropriate message
+              <SmallMessage>
+                  Your course cart is empty.
+              </SmallMessage>
+            )
+          }
+        </>)
         }
       </ReceiptList>
       </CourseList>
@@ -207,7 +274,7 @@ const MoreInfo = styled.p`
   margin-left: 20px;
   color: rgb(80,80,80);
   z-index: 1;
-  margin-top: -25px;
+  // margin-top: -25px;
   padding-top: 0;
 `
 const CoursesPageContainer = styled.div`
