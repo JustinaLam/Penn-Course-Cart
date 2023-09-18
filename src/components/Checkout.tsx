@@ -2,7 +2,7 @@ import '../App.css';
 import styled from 'styled-components';
 import CapacityPopup from './CapacityPopup';
 import Receipt from './Receipt';
-import {Course} from '../App'
+import {Course} from '../App';
 import { useNavigate, useLocation } from 'react-router-dom';
 import React, { useEffect, useState, useRef, createContext } from "react";
 import SimpleHeader from './SimpleHeader';
@@ -11,6 +11,8 @@ export interface CheckoutProps {
   courseList: Array<Course>;
   courseTitleList: Array<String>;
   cartVisible: boolean;
+  // semester: string;
+  // setSemester:(semester: string) => void;
 }
 // Page displayed for route '/checkout' (when user checks out cart)
 function Checkout() {

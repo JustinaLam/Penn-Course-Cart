@@ -1,7 +1,7 @@
 import './App.css';
 import Home from './components/Home';
 import Checkout from './components/Checkout';
-import React, { useEffect, useState, useRef, createContext } from "react";
+import React, { useState, createContext } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -21,8 +21,18 @@ const AppContext = createContext<AppContextType>(AppContextState)
 export interface Course {
   dept: String;
   number: Number;
-  title: String
+  title: String;
   description: String;
+}
+export interface CourseInfo {
+  dept: String;
+  number: Number;
+  title: String;
+  description: String;
+  courseQuality: Number;
+  instructorQuality: Number;
+  difficulty: Number;
+  workRequired: Number;
 }
 
 function App() {

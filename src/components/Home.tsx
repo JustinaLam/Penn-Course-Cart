@@ -6,7 +6,7 @@ import Cart from './Cart';
 import CapacityPopup from './CapacityPopup';
 import {Course} from '../App'
 import { useLocation } from 'react-router-dom';
-import React, { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 
 // Arguments passed to Courses
 export interface CoursesProps {
