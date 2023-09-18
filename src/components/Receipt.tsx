@@ -10,19 +10,18 @@ const semestersList = ['2020C', '2021A', '2021C', '2022A']
 const statusMap = new Map()
 const daysMap = new Map()
 
-
 // Receipt page displayed when the user checks out their cart
 const Receipt = ({courseList, courseTitleList}: CheckoutProps) => {
   const {state} = useLocation();
   const [semester, setSemester] = useState<string>("2022A")
   const [coursesInfo, setCoursesInfo] = useState(state && state.coursesInfo ? state.coursesInfo : new Array<CourseInfo>())
 
-  // Set statusMap
+  // Set statusMap to interpret status
   statusMap.set("O", "Open")
   statusMap.set("C", "Closed")
   statusMap.set("X", "Cancelled")
   statusMap.set("", "Unlisted")
-  // Set daysMap
+  // Set daysMap to interpret days
   daysMap.set("FMW", "MWF")
   daysMap.set("RT", "TR")
   daysMap.set("","Unknown")

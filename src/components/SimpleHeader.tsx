@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Course } from '../App'
-import { useNavigate, useLocation, NavigateFunction } from 'react-router-dom';
+import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { CheckoutProps } from './Checkout';
 
 const SimpleHeader = ({courseList, courseTitleList, cartVisible}: CheckoutProps) => {

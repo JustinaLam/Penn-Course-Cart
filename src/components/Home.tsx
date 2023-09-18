@@ -52,13 +52,16 @@ function Home() {
   const {state} = useLocation();
   // Search bar contents
   const [input, setSearch] = useState("")
+
   // Lists of Course objects and course titles in user's cart
   const [courseList, setCourseList] = useState(state ? state.courseList : new Array<Course>());
   const [courseTitleList, setCourseTitles] = useState(state ? state.courseTitleList : new Array<String>());
+
   // Booleans for whether cart, capacity popup, and navbar filter are visible
   const [cartVisible, setCartVisibility] = useState(state ? state.cartVisible : false);
   const [capacityPopup, setCapacityPopup] = useState(false);
   const [filterVisible, setFilterVisibility] = useState(false);
+  
   // Lower and upper bounds for filtering courses
   const [min, setMin] = useState<Number>(0);
   const [max, setMax] = useState<Number>(8000);
